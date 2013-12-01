@@ -9,10 +9,14 @@ module Fission
         # Populates repository data using given user credentials
         class RepositoryPopulator < Utils
 
-          # user:: Fission::Data::User instance
+          # user:: Fission::Data::User instance or user ID
           # args:: Optionally specify specific sources (:github)
           # Populates repository data
           def run!(user, *args)
+            unless(user.is_a?(Fission::Data::User))
+              user = Fission::Data::User[user]
+            end
+            raise 'No user instance provided or found!'
             %w(github).each do |style|
               if(args.include?(style.to_sym) || args.empty?)
                 send(style, user)
