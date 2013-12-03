@@ -12,13 +12,11 @@ module Fission
           # user:: Fission::Data::User instance or user ID
           # args:: Optionally specify specific sources (:github)
           # Populates repository data
-          def run!(user, *args)
-            unless(user.is_a?(Fission::Data::User))
-              user = Fission::Data::User[user]
-            end
-            raise 'No user instance provided or found!'
+          def run!(args={})
+            user = Fission::Data::User[args[:user]]
+            raise 'No user instance provided or found!' unless user
             %w(github).each do |style|
-              if(args.include?(style.to_sym) || args.empty?)
+              if(args[:enabled].nil? || args[:enabled].include?(style.to_sym))
                 send(style, user)
               end
             end
