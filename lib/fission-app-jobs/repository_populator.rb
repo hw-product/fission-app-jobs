@@ -1,5 +1,5 @@
 require 'fission/callback'
-require 'fission-app-jobs/utils/repository-populator'
+require 'fission-app-jobs/utils/repository_populator'
 
 module Fission
   module App
