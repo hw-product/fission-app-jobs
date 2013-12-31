@@ -36,9 +36,6 @@ module Fission
               account = github_org_account(team.organization)
               accounts[account.id] ||= []
               if(team.name == 'Owners')
-                fetch_all(team.organization, :repos).each do |repo|
-                  add_github_repository(repo, account)
-                end
                 accounts[account.id] << :owner
               else
                 accounts[account.id] << :member
@@ -53,12 +50,6 @@ module Fission
               end
               account.save
             end
-            # Fetch all repos the user owns
-            # NOTE: This is disabled, likely to be removed.
-            # account = user.base_account
-            # fetch_all(client.user, :repos).each do |repo|
-              # add_github_repository(repo, account)
-            # end
             true
           end
 
