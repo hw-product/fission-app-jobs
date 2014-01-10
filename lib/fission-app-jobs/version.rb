@@ -3,7 +3,7 @@ module Fission
     module Jobs
       class Version < Gem::Version
       end
-      VERSION = Version.new('0.1.0')
+      VERSION = Version.new('0.1.1')
     end
   end
 end
