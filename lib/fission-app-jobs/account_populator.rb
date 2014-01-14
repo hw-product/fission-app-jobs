@@ -13,9 +13,10 @@ module Fission
         end
 
         def execute(message)
-          payload = unpack(message)
-          Utils::AccountPopulator.new.run!(retrieve(payload, :data, :app))
-          job_completed(:app_jobs, payload, message)
+          failure_wrap(message) do |payload|
+            Utils::AccountPopulator.new.run!(retrieve(payload, :data, :app))
+            job_completed(:app_jobs, payload, message)
+          end
         end
       end
     end
