@@ -48,25 +48,10 @@ module Fission
               else
                 account.add_members(user)
               end
+              account.set_payment_information
               account.save
             end
             true
-          end
-
-          # repo:: Octokit repo instance
-          # account:: Fission::Data::Account instance
-          # Add repo to fission data
-          def add_github_repository(repo, account)
-            repository = Fission::Data::Repository.find_by_url(repo.rels[:git].href) || Fission::Data::Repository.new
-            repository.name = repo.name
-            repository.url = repo.rels[:git].href
-            repository.clone_url = repo.rels[:clone].href
-            repository.private = repo.private
-            repository.owner = account
-            unless(repository.save)
-              raise "Failed to save repository! #{repository.errors.join(', ')}"
-            end
-            repository
           end
 
           # org:: Octokit org resource
