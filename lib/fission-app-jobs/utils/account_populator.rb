@@ -59,9 +59,7 @@ module Fission
           def github_org_account(org)
             account = Fission::Data::Account.lookup(org.login, :github)
             unless(account)
-              account = Fission::Data::Account.new
-              account.name = org.login
-              account.source = :github
+              account = Fission::Data::Account.remote_lookup(org.login, :github)
               account.email = org.email
               unless(account.save)
                 raise "Failed to save account! - #{account.errors.join(', ')}"
