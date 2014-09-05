@@ -1,9 +1,6 @@
-module Fission
-  module App
-    module Jobs
-      class Version < Gem::Version
-      end
-      VERSION = Version.new('0.1.1')
-    end
+module FissionApp
+  module Jobs
+    # Current version
+    VERSION = Gem::Version.new('0.1.2')
   end
 end

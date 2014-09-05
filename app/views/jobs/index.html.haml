@@ -1,0 +1,14 @@
+%div.jobs-summary
+  %div.container.container-padding
+    %div.panel.panel-default
+      %div.panel-heading
+        %div.row
+          %div.col-md-8
+            %h3
+              Jobs Summary
+          %div.col-md-4
+            %div#jobs_summary_gauge
+      %div.panel-body#fission-jobs-summary
+        = render :partial => 'jobs/summary', :locals => {:jobs => @jobs}
+:javascript
+  #{graph_generate('jobs_summary_gauge', :size => {:height => 100}, :gauge=> {:label => {:show => false}}, :data => {:type => 'gauge', :columns => [['success', 95.3]]})}
