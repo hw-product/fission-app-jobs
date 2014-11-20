@@ -9,13 +9,14 @@ class JobsController < ApplicationController
   end
 
   before_action do
+    @valid_jobs = Job.dataset.join_table(:left, :jobs___j2){ |j2, j| ({Sequel.qualify(j, :message_id) => Sequel.qualify(j2, :message_id)}) & (Sequel.qualify(j, :created_at) < Sequel.qualify(j2, :created_at))}.where(:j2__id => nil).select(:jobs__id)
     @product = Product.find_by_internal_name(params[:namespace])
     @jobs_complete = Job.dataset_with_complete.where(
       :account_id => @accounts.map(&:id)
-    ).where('? = ANY(complete)', params[:namespace])
+    ).where('? = ANY(complete)', params[:namespace].to_s)
     @jobs_inprogress = Job.dataset_with_router.where(
       :account_id => @accounts.map(&:id)
-    ).where('? = ANY(router)', params[:namespace])
+    ).where('? = ANY(router)', params[:namespace].to_s)
     @jobs_error = Job.dataset_with(
       :scalars => {
         :error => ['error', 'callback']
@@ -53,13 +54,16 @@ class JobsController < ApplicationController
         javascript_redirect_to dashboard_path
       end
       format.html do
+        complete_jobs = @jobs_complete.select(:id).all.map(&:id) + @jobs_inprogress.select(:id).all.map(&:id) + @jobs_error.select(:id).all.map(&:id)
+        @jobs = Job.where(:id => @valid_jobs).where(:id => complete_jobs).all
+        @progress = (@jobs.map(&:percent_complete).sum.to_f / @jobs.count)
         @data = Hash[
           @accounts.map do |acct|
             [
               acct,
               Smash.new(
-                :in_progress => @jobs_inprogress.where(:account_id => acct.id).count,
-                :completed => @jobs_completed.where(:account_id => acct.id).count
+                :in_progress => @jobs_inprogress.where(:id => @valid_jobs, :account_id => acct.id).all,
+                :completed => @jobs_complete.where(:id => @valid_jobs, :account_id => acct.id).all
               )
             ]
           end
