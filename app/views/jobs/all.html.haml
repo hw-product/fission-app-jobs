@@ -11,4 +11,4 @@
       %div.panel-body#fission-jobs-summary
         = render :partial => 'jobs/summary', :locals => {:jobs => @jobs}
 :javascript
-  #{graph_generate('jobs_summary_gauge', :size => {:height => 100}, :gauge=> {:label => {:show => false}}, :data => {:type => 'gauge', :columns => [['success', 95.3]]})}
+  #{graph_generate('jobs_summary_gauge', :size => {:height => 100}, :gauge=> {:label => {:show => false}}, :data => {:type => 'gauge', :columns => [['success', @progress]]})}

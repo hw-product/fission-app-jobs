@@ -11,15 +11,18 @@
         Account
       %th.col-md-2
         Job Name
+      %th.col-md-2
+        Status
       %th.col-md-1
         Progress
   %tbody
     - jobs.each do |job|
       %tr
-        %td= link_to job.message_id, job_path(job)
+        %td= job.message_id
         %td= job.created_at
         %td= job.account.name
         %td= job.payload[:job]
+        %td= job.status
         %td= "#{job.percent_complete}%"
 - if content_for?(:pagination)
   %div.fission-pagination.well.well-sm= content_for(:pagination)
