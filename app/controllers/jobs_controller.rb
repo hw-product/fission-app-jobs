@@ -9,7 +9,9 @@ class JobsController < ApplicationController
   end
 
   before_action do
-    @product = Product.find_by_internal_name(params[:namespace])
+    unless(@product)
+      raise "Must define product for job listing. Full list currently disabled"
+    end
     valid_jobs = Job.dataset.join_table(:left, :jobs___j2){ |j2, j| ({Sequel.qualify(j, :message_id) => Sequel.qualify(j2, :message_id)}) & (Sequel.qualify(j, :created_at) < Sequel.qualify(j2, :created_at))}.where(:j2__id => nil).select(:jobs__id)
     @valid_jobs = Job.dataset_with(
       :scalars => {
@@ -17,14 +19,14 @@ class JobsController < ApplicationController
       }
     ).where(
       :route => params[:namespace].to_s,
-      :account_id => @accounts.map(&:id),
+      :account_id => @account.id,
       :id => valid_jobs
     ).select(:id)
     @jobs_complete = Job.dataset_with_complete.where(
-      :account_id => @accounts.map(&:id)
+      :account_id => @account.id
     ).where('? = ANY(complete)', 'package_builder') #params[:namespace].to_s)
     @jobs_inprogress = Job.dataset_with_router.where(
-      :account_id => @accounts.map(&:id)
+      :account_id => @account.id
     ).where('? = ANY(router)', 'package_builder') #params[:namespace].to_s)
     @jobs_error = Job.dataset_with(
       :scalars => {
