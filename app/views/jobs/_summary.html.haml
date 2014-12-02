@@ -21,7 +21,7 @@
         %td= job.message_id
         %td= job.created_at
         %td= job.account.name
-        %td= job.payload[:job]
+        %td= job.payload.get(:data, :router, :action)
         %td= job.status
         %td= "#{job.percent_complete}%"
 - if content_for?(:pagination)
