@@ -7,7 +7,7 @@ module FissionApp
     #
     # @return [Proc] block for injecting routes
     def self.jobs_routes
-      Proc.new do |namespace|
+      Proc.new do |namespace, disable_details=false|
         get(
           "#{namespace}/jobs(/:payload_filter/:payload_value)",
           :defaults => {
@@ -16,14 +16,16 @@ module FissionApp
           :to => 'jobs#all',
           :as => "#{namespace}_jobs"
         )
-        get(
-          "#{namespace}/job/:job_id",
-          :defaults => {
-            :namespace => namespace
-          },
-          :to => 'jobs#details',
-          :as => "#{namespace}_job"
-        )
+        unless(disable_details)
+          get(
+            "#{namespace}/job/:job_id",
+            :defaults => {
+              :namespace => namespace
+            },
+            :to => 'jobs#details',
+            :as => "#{namespace}_job"
+          )
+        end
       end
     end
 
