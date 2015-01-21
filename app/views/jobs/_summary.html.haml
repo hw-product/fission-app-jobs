@@ -3,10 +3,10 @@
 %table.table.table-hover#log-display
   %thead
     %tr
-      %th.col-md-3
-        Message ID
-      %th.col-md-4
+      %th.col-md-2
         Timestamp
+      %th.col-md-5
+        Message ID
       %th.col-md-2
         Account
       %th.col-md-2
@@ -14,12 +14,12 @@
       %th.col-md-2
         Status
       %th.col-md-1
-        Progress
+        Completed
   %tbody
     - jobs.each do |job|
-      %tr
+      %tr.linked{:class => job.status == :error ? 'danger' : '', :href => send("#{@namespace}_job_path", job.message_id)}
+        %td= job.created_at.strftime('%Y/%m/%d %H:%M:%S')
         %td= job.message_id
-        %td= job.created_at
         %td= job.account.name
         %td= job.payload.get(:data, :router, :action)
         %td= job.status
