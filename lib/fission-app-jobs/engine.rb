@@ -8,9 +8,22 @@ module FissionApp
     # @return [Proc] block for injecting routes
     def self.jobs_routes
       Proc.new do |namespace|
-        get "#{namespace}/jobs(/:payload_filter/:payload_value)", :defaults => {:namespace => namespace}, :to => 'jobs#all'
-        get "#{namespace}/jobs(/:payload_filter/:payload_value)", :defaults => {:namespace => namespace}, :to => 'jobs#list'
-        get "#{namespace}/job/:job_id", :defaults => {:namespace => namespace}, :to => 'jobs#details'
+        get(
+          "#{namespace}/jobs(/:payload_filter/:payload_value)",
+          :defaults => {
+            :namespace => namespace
+          },
+          :to => 'jobs#all',
+          :as => "#{namespace}_jobs"
+        )
+        get(
+          "#{namespace}/job/:job_id",
+          :defaults => {
+            :namespace => namespace
+          },
+          :to => 'jobs#details',
+          :as => "#{namespace}_job"
+        )
       end
     end
 
