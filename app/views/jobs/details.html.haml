@@ -26,14 +26,6 @@
             %b
               Completed
           %td= "#{@job.percent_complete}%"
-        %tr
-          %td
-            %b
-              History
-          %td
-            - @history.each do |j|
-              = link_to j.created_at, job_path(j)
-              %br
       %div.panel.panel-default
         %div.panel-heading
           %h4.panel-title

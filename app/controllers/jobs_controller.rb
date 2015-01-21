@@ -37,7 +37,6 @@ class JobsController < ApplicationController
       end
       format.html do
         @job = @valid_jobs.where(:message_id => params[:job_id]).first
-        @history = []
         unless(@job)
           flash[:error] = "Failed to locate requested job (ID: #{params[:job_id]})"
           redirect_to dashboard_path
