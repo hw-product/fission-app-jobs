@@ -1,14 +1,25 @@
-%div.jobs-summary
-  %div.container.container-padding
-    %div.panel.panel-default
-      %div.panel-heading
-        %div.row
-          %div.col-md-8
-            %h3
-              Jobs Summary
-          %div.col-md-4
-            %div#jobs_summary_gauge
-      %div.panel-body#fission-jobs-summary
-        = render :partial => 'jobs/summary', :locals => {:jobs => @jobs}
+- content_for(:header) do
+  %div.row
+    %div.col-md-8
+      %h3
+        Jobs Summary
+    %div.col-md-4
+      %div#jobs_summary_gauge
+
+:ruby
+  content_for(:container) do
+    render(
+      :partial => 'layouts/panel',
+      :locals  => {
+        :body_id => 'fission-jobs-summary',
+        :heading => content_for(:header),
+        :panel_content => render(:partial => 'jobs/summary', :locals => {:jobs => @jobs})
+      }
+    )
+  end
+
+= render(:partial => 'layouts/container', :locals => { :container_class => 'jobs-summary' })
+
 :javascript
   #{graph_generate('jobs_summary_gauge', :size => {:height => 100}, :gauge=> {:label => {:show => false}}, :data => {:type => 'gauge', :columns => [['success', @progress]]})}
+
