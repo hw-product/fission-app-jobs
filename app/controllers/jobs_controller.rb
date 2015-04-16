@@ -38,8 +38,18 @@ class JobsController < ApplicationController
       format.html do
         @job = @valid_jobs.where(:message_id => params[:job_id]).first
         unless(@job)
-          flash[:error] = "Failed to locate requested job (ID: #{params[:job_id]})"
-          redirect_to dashboard_path
+          @job = Job.find_by_id(params[:job_id])
+          if(@job && @job.account_id != @account.id)
+            namespace = job.payload.get(:data, :router, :action)
+            if(namespace && respond_to?("#{namespace}_job_path"))
+              redirect_to send("#{namespace}_job_path", job.message_id, :account_id => @account.id)
+            else
+              redirect_to job_path(job.message_id)
+            end
+          else
+            flash[:error] = "Failed to locate requested job (ID: #{params[:job_id]})"
+            redirect_to dashboard_path
+          end
         end
       end
     end
