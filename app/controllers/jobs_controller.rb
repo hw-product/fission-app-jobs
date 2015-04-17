@@ -41,19 +41,6 @@ class JobsController < ApplicationController
           flash[:error] = "Failed to locate requested job (ID: #{params[:job_id]})"
           redirect_to dashboard_path
         end
-
-        @state = case @job.status
-                 when :success, :complete
-                     'success'
-                   when :error
-                     'danger'
-                   else
-                     'warn'
-                   end
-        @table_data =  [['Timestamp', @job.created_at],
-                        ['Account', @job.account.name],
-                        ['Status', @job.status.to_s.humanize],
-                        ['Completed', @job.percent_complete]]
       end
     end
   end

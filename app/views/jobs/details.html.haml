@@ -3,25 +3,43 @@
     Job:
     = @job.message_id
 
-- content_for(:panel_body) do
+
+:ruby
+  state = case @job.status
+    when :success, :complete
+      'success'
+    when :error
+      'danger'
+    else
+      'warn'
+    end
+  table_data =  [['Timestamp', @job.created_at],
+                 ['Account', @job.account.name],
+                 ['Status', @job.status.to_s.humanize],
+                 ['Completed', @job.percent_complete]]
+
+- content_for(:panel_content) do
   = render(:partial => 'layouts/table',    |
-           :locals => { :header_data => ['', ''], :data => @table_data})
-  %div.panel.panel-default
-    %div.panel-heading
-      %h4.panel-title
-        %a.accordion-toggle{'data-toggle' => 'collapse', :href => '#payload-display'}
-          Payload
-    %div.panel-collapse.collapse#payload-display
-      %div.panel-body
-        %pre#job-payload~ JSON.pretty_generate(@job.payload.to_hash)
+           :locals => { :header_data => ['', ''], :data => table_data})
+  - if content_for?(:panel_body)
+    = content_for(:panel_body)
+  - else
+    %div.panel.panel-default
+      %div.panel-heading
+        %h4.panel-title
+          %a.accordion-toggle{'data-toggle' => 'collapse', :href => '#payload-display'}
+            Payload
+      %div.panel-collapse.collapse#payload-display
+        %div.panel-body
+          %pre#job-payload~ JSON.pretty_generate(@job.payload.to_hash)
 
 
 - content_for(:container) do
   = render(:partial => 'layouts/panel',                      |
            :locals => {                                      |
              :heading => content_for(:panel_header),         |
-             :panel_class => "panel-#{@state}",              |
-             :panel_content => content_for(:panel_body) })
+             :panel_class => "panel-#{state}",              |
+             :panel_content => content_for(:panel_content) })
 
 = render(:partial => 'layouts/container',                            |
          :locals => { :container_content => content_for(:container), |
