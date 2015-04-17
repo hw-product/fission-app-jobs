@@ -1,9 +1,3 @@
-- content_for(:panel_header) do
-  %h3
-    Job:
-    = @job.message_id
-
-
 :ruby
   state = case @job.status
     when :success, :complete
@@ -13,10 +7,16 @@
     else
       'warn'
     end
+
+  status = "<div class='text-#{state}'>#{@job.status.to_s.humanize}</div>".html_safe
   table_data =  [['Timestamp', @job.created_at],
                  ['Account', @job.account.name],
-                 ['Status', @job.status.to_s.humanize],
-                 ['Completed', @job.percent_complete]]
+                 ['Status', status],
+                 ['Completed', "#{@job.percent_complete}%"]]
+
+- content_for(:panel_header) do
+  - job_type = request.path.split('/')[1].capitalize
+  %h3= "#{job_type} Job: #{@job.message_id}"
 
 - content_for(:panel_content) do
   = render(:partial => 'layouts/table',    |
@@ -38,7 +38,7 @@
   = render(:partial => 'layouts/panel',                      |
            :locals => {                                      |
              :heading => content_for(:panel_header),         |
-             :panel_class => "panel-#{state}",              |
+             :panel_class => "panel-#{state}",               |
              :panel_content => content_for(:panel_content) })
 
 = render(:partial => 'layouts/container',                            |
