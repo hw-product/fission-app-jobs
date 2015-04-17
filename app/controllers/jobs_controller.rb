@@ -37,6 +37,11 @@ class JobsController < ApplicationController
       end
       format.html do
         @job = @valid_jobs.where(:message_id => params[:job_id]).first
+        unless(@job)
+          flash[:error] = "Failed to locate requested job (ID: #{params[:job_id]})"
+          redirect_to dashboard_path
+        end
+
         @state = case @job.status
                  when :success, :complete
                      'success'
@@ -45,11 +50,6 @@ class JobsController < ApplicationController
                    else
                      'warn'
                    end
-        unless(@job)
-          flash[:error] = "Failed to locate requested job (ID: #{params[:job_id]})"
-          redirect_to dashboard_path
-        end
-
         @table_data =  [['Timestamp', @job.created_at],
                         ['Account', @job.account.name],
                         ['Status', @job.status.to_s.humanize],
