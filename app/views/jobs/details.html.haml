@@ -1,36 +1,28 @@
-%div#fission-job.container.container-padding
+- content_for(:panel_header) do
+  %h3
+    Job:
+    = @job.message_id
+
+- content_for(:panel_body) do
+  = render(:partial => 'layouts/table',    |
+           :locals => { :header_data => ['', ''], :data => @table_data})
   %div.panel.panel-default
     %div.panel-heading
-      %h3
-        Job:
-        = @job.message_id
-    %div.panel-body
-      %table.table.table-hover
-        %tr
-          %td
-            %b
-              Timestamp
-          %td= @job.created_at
-        %tr
-          %td
-            %b
-              Account
-          %td= @job.account.name
-        %tr
-          %td
-            %b
-              Status
-          %td= @job.status.to_s.humanize
-        %tr
-          %td
-            %b
-              Completed
-          %td= "#{@job.percent_complete}%"
-      %div.panel.panel-default
-        %div.panel-heading
-          %h4.panel-title
-            %a.accordion-toggle{'data-toggle' => 'collapse', :href => '#payload-display'}
-              Payload
-        %div.panel-collapse.collapse#payload-display
-          %div.panel-body
-            %pre#job-payload~ JSON.pretty_generate(@job.payload.to_hash)
+      %h4.panel-title
+        %a.accordion-toggle{'data-toggle' => 'collapse', :href => '#payload-display'}
+          Payload
+    %div.panel-collapse.collapse#payload-display
+      %div.panel-body
+        %pre#job-payload~ JSON.pretty_generate(@job.payload.to_hash)
+
+
+- content_for(:container) do
+  = render(:partial => 'layouts/panel',                      |
+           :locals => {                                      |
+             :heading => content_for(:panel_header),         |
+             :panel_class => "panel-#{@state}",              |
+             :panel_content => content_for(:panel_body) })
+
+= render(:partial => 'layouts/container',                            |
+         :locals => { :container_content => content_for(:container), |
+                      :container_id => 'fission-job' })
