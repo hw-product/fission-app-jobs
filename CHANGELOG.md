@@ -1,3 +1,7 @@
+# v0.1.6
+* View refactor to use common layouts
+* Add auto redirect on direct job request
+
 # v0.1.4
 * Clean up routing layout
 * Remove job history section
