@@ -2,17 +2,7 @@ require 'base64'
 
 class JobsController < ApplicationController
 
-  before_action do
-    @valid_jobs = Job.dataset_with(
-      :scalars => {
-        :route => ['data', 'router', 'action'],
-        :status => ['status']
-      }
-    ).where(
-      :route => params[:namespace].to_s,
-      :account_id => current_user.run_state.current_account.id
-    )
-  end
+  before_action :set_valid_jobs
 
   def all
     respond_to do |format|
@@ -54,5 +44,20 @@ class JobsController < ApplicationController
       end
     end
   end
+
+  protected
+
+  def set_valid_jobs
+    @valid_jobs = Job.dataset_with(
+      :scalars => {
+        :route => ['data', 'router', 'action'],
+        :status => ['status']
+      }
+    ).where(
+      :route => params[:namespace].to_s,
+      :account_id => current_user.run_state.current_account.id
+    )
+  end
+
 
 end
