@@ -13,7 +13,7 @@ class JobsController < ApplicationController
       format.html do
         @jobs = @valid_jobs.order(:created_at.desc).paginate(page, per_page)
         @progress = (@jobs.all.map(&:percent_complete).sum.to_f / @jobs.count)
-        @namespace = @product.internal_name
+        @namespace = @product.internal_name if @namespace.nil?
         enable_pagination_on(@jobs)
       end
     end
