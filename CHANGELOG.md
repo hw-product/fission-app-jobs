@@ -1,3 +1,6 @@
+# v0.1.8
+* Update controller to allow more control within subclasses
+
 # v0.1.6
 * View refactor to use common layouts
 * Add auto redirect on direct job request
