@@ -21,6 +21,17 @@
 - content_for(:panel_content) do
   = render(:partial => 'layouts/table',    |
            :locals => { :header_data => ['', ''], :data => table_data})
+  - if @logs && !@logs.empty?
+    %fieldset
+      %legend
+        Logs
+      %ul.list-group
+        - @logs.each do |name, value|
+          - if Rails.application.env.to_s == 'development'
+            %li.list-group-item.log{'data-text' => value} = name
+          - else
+            %li.list-group-item.log{'data-url' => value}= name
+
   - if content_for?(:panel_body)
     = content_for(:panel_body)
   - else
@@ -44,3 +55,35 @@
 = render(:partial => 'layouts/container',                            |
          :locals => { :container_content => content_for(:container), |
                       :container_id => 'fission-job' })
+
+:javascript
+  $(document).ready(
+    function(){
+      $('.log').click(function(){
+        if($(this).attr('data-url')){
+          window_rails.create_window({
+            name: 'log',
+            title: 'Log file: ' + $(this).text(),
+            size: 'large',
+            content: '<div id="log-position">Loading...</div>'
+          });
+          $.ajax({
+            url: $(this).attr('data-url'),
+            type: 'GET'
+          }).error(function(data, status){
+            $('#log-position').html('<b>ERROR:</b> ' + data.responseText);
+          }).success(function(data){
+            $('#log-position').html('<pre>' + data.responseText);
+          });
+        }
+        else {
+          window_rails.create_window({
+            name: 'log',
+            title: 'Log file: ' + $(this).text(),
+            size: 'large',
+            content: $(this).attr('data-text')
+          });
+        }
+      });
+    }
+  );

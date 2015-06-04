@@ -40,6 +40,32 @@ class JobsController < ApplicationController
             flash[:error] = "Failed to locate requested job (ID: #{params[:job_id]})"
             redirect_to dashboard_path
           end
+        else
+          @logs = Smash.new.tap do |logs|
+            @job.payload.fetch(:data, {}).each do |k,v|
+              if(v && v.is_a?(Hash) && v[:logs])
+                v[:logs].each do |args|
+                  if(args.is_a?(Array))
+                    name, key = *args
+                  else
+                    i ||= 1
+                    name = "Log #{i}"
+                    i = i.next
+                    key = args
+                  end
+                  begin
+                    if(Rails.application.env.to_s == 'development')
+                      logs[name] = Rails.application.config.fission_assets.get(key).read
+                    else
+                      logs[name] = Rails.application.config.fission_assets.url(key)
+                    end
+                  rescue => e
+                    logs[name] = 'FILE NOT FOUND!'
+                  end
+                end
+              end
+            end
+          end
         end
       end
     end
