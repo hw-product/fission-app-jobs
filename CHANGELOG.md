@@ -1,3 +1,6 @@
+# v0.1.10
+* Add support for generic log views
+
 # v0.1.8
 * Update controller to allow more control within subclasses
 
