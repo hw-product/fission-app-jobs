@@ -1,3 +1,6 @@
+# v0.1.12
+* Fix environment request location
+
 # v0.1.10
 * Add support for generic log views
 
