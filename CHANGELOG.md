@@ -1,3 +1,7 @@
+# v0.1.14
+* Set expiry on generated log URL
+* Auto set account when job does not match
+
 # v0.1.12
 * Fix environment request location
 
