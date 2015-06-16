@@ -73,7 +73,7 @@
           }).error(function(data, status){
             $('#log-position').html('<b>ERROR:</b> ' + data.responseText);
           }).success(function(data){
-            $('#log-position').html('<pre>' + data.responseText);
+            $('#log-position').html('<pre>' + data + '</pre>');
           });
         }
         else {
@@ -84,6 +84,7 @@
             content: $(this).attr('data-text')
           });
         }
+        window_rails.open_window('log', {});
       });
     }
   );

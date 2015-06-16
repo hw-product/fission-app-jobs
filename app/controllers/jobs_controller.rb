@@ -57,7 +57,7 @@ class JobsController < ApplicationController
                     if(Rails.env.to_s == 'development')
                       logs[name] = Rails.application.config.fission_assets.get(key).read
                     else
-                      logs[name] = Rails.application.config.fission_assets.url(key)
+                      logs[name] = Rails.application.config.fission_assets.url(key, 500)
                     end
                   rescue => e
                     logs[name] = 'FILE NOT FOUND!'
