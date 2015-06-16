@@ -2,6 +2,7 @@ require 'base64'
 
 class JobsController < ApplicationController
 
+  before_action :set_job_account
   before_action :set_valid_jobs
 
   def all
@@ -85,5 +86,17 @@ class JobsController < ApplicationController
     )
   end
 
+  def set_job_account
+    if(params[:job_id])
+      job = Job.where(:message_id => params[:job_id]).first
+      if(job.account_id && job.account_id != @account.id)
+        redirect_to send(
+          "#{@namespace}_job_path",
+          :job_id => params[:job_id],
+          :account_id => job.accound.id
+        )
+      end
+    end
+  end
 
 end
