@@ -88,7 +88,7 @@ class JobsController < ApplicationController
 
   def set_job_account
     if(params[:job_id])
-      job = Job.where(:message_id => params[:job_id]).first
+      job = Job.where(:message_id => params[:job_id]).last
       if(job.account_id && job.account_id != @account.id)
         redirect_to send(
           "#{@namespace}_job_path",
