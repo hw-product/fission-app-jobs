@@ -1,3 +1,6 @@
+# v0.1.16
+* Fetch last job to grab valid account information
+
 # v0.1.14
 * Set expiry on generated log URL
 * Auto set account when job does not match
