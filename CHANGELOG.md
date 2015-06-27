@@ -1,3 +1,7 @@
+# v0.1.18
+* Only display data section of payload
+* Format log listing on display
+
 # v0.1.16
 * Fetch last job to grab valid account information
 
