@@ -42,7 +42,7 @@
             Payload
       %div.panel-collapse.collapse#payload-display
         %div.panel-body
-          %pre#job-payload~ JSON.pretty_generate(@job.payload.to_hash)
+          %pre#job-payload~ JSON.pretty_generate(@job.payload.fetch(:data, {}).to_hash)
 
 
 - content_for(:container) do
