@@ -28,9 +28,13 @@
       %ul.list-group
         - @logs.each do |name, value|
           - if Rails.env.to_s == 'development'
-            %li.list-group-item.log{'data-text' => value} = name
+            %li.list-group-item.log{'data-text' => value, :style => 'cursor: pointer'}
+              %span.glyphicon.glyphicon-open-file
+              = name
           - else
-            %li.list-group-item.log{'data-url' => value}= name
+            %li.list-group-item.log{'data-url' => value, :style => 'cursor: pointer'}
+              %span.glyphicon.glyphicon-open-file
+              = name
 
   - if content_for?(:panel_body)
     = content_for(:panel_body)
