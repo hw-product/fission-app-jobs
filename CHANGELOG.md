@@ -1,3 +1,6 @@
+# v0.1.20
+* Provide error message within job details if error state
+
 # v0.1.18
 * Only display data section of payload
 * Format log listing on display
