@@ -9,27 +9,32 @@
     end
 
   status = "<div class='text-#{state}'>#{@job.status.to_s.humanize}</div>".html_safe
-  common_table_data =  [['Timestamp', @job.created_at.strftime('%Y/%m/%d %H:%M:%S %Z')],
-                        ['Status', status],
-                       ['Completed', "#{@job.percent_complete}%"]]
+  table_data = [
+    ['Timestamp', @job.created_at.strftime('%Y/%m/%d %H:%M:%S %Z')],
+    ['Status', status],
+    ['Completed', "#{@job.percent_complete}%"]
+  ]
 
-  table_data = case @job.payload.get(:data, :code_fetcher, :info, :source)
-    when "github"
-      parsed_uri = URI.parse(@job.payload.get(:data, :code_fetcher, :info, :url))
-      account_uri = URI::Generic.build(:scheme => parsed_uri.scheme,
-                                       :host => parsed_uri.host,
-                                       :path => '/' + @job.payload.get(:data, :code_fetcher, :info, :name)
-                                       )
-      github_table_data = [['Github Account', link_to(@job.account.name, "#{account_uri}")],
-                           ['Github Repository', link_to(@job.payload.fetch(:data, :github, :repository, :name, 'Unknown'), \
-                             @job.payload.fetch(:data, :github, :repository, :url, '#'))],
-                           ['Github Commit', link_to(@job.payload.fetch(:data, :github, :head_commit, :id, 'Unknown').slice(0, 7), \
-                             @job.payload.fetch(:data, :github, :head_commit, :url, '#'))]]
-      github_table_data + common_table_data
-    else
-      common_table_data
+  :ruby
+    if(@job.payload.get(:data, :code_fetcher, :info))
+      repo_name = @job.payload.get(:data, :code_fetcher, :info, :name)
+      repo_url = @job.payload.get(:data, :code_fetcher, :info, :url)
+      account_name = @job.payload.get(:data, :code_fetcher, :info, :owner)
+      account_url = @job.payload.get(:data, :code_fetcher, :info, :url).sub(
+        /#{Regexp.escape(@job.payload.get(:data, :code_fetcher, :info, :name))}.*$/, ''
+      )
+      repo_ref = @job.payload.get(:data, :code_fetcher, :info, :reference)
+      ref_url = @job.payload.get(:data, :github, :compare)
+      commit_sha = @job.payload.get(:data, :code_fetcher, :info, :commit_sha).to_s.slice(0, 7)
+      commit_url = @job.payload.get(:data, :github, :head_commit, :url)
+
+      table_data = [
+        ['Account', account_name ? link_to(account_name, account_url) : 'N/A'],
+        ['Repository', repo_name ? link_to(repo_name, repo_url) : 'N/A'],
+        ['Reference', ref_url ? link_to(repo_ref, ref_url) : repo_ref],
+        ['Commit', commit_url ? link_to(commit_sha, commit_url) : commit_sha]
+      ] + table_data
     end
-
 
 - content_for(:panel_header) do
   - job_type = request.path.split('/')[1].capitalize
