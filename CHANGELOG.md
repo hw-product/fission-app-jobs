@@ -1,3 +1,6 @@
+# v0.1.22
+* Update view layouts and details information
+
 # v0.1.20
 * Provide error message within job details if error state
 
