@@ -9,8 +9,12 @@
     end
 
   status = "<div class='text-#{state}'>#{@job.status.to_s.humanize}</div>".html_safe
-  table_data =  [['Timestamp', @job.created_at.strftime('%Y/%m/%d %H:%M:%S %Z')],
-                 ['Account', @job.account.name],
+  table_data =  [['Github Repository', link_to(@job.payload.fetch(:data, :github, :repository, :name, 'Unknown'), \
+                   @job.payload.fetch(:data, :github, :repository, :url, '#'))],
+                 ['Github Commit', link_to(@job.payload.fetch(:data, :github, :head_commit, :id, 'Unknown').slice(0, 7), \
+                   @job.payload.fetch(:data, :github, :head_commit, :url, '#'))],
+                 ['Timestamp', @job.created_at.strftime('%Y/%m/%d %H:%M:%S %Z')],
+                 ['Account', link_to(@job.account.name, "https://github.com/#{@job.account.name}")],
                  ['Status', status],
                  ['Completed', "#{@job.percent_complete}%"]]
 
