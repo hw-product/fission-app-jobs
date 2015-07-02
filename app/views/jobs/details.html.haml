@@ -24,6 +24,7 @@
   - if @job.status == :error
     .alert.alert-danger
       %b
+        %span.glyphicon.glyphicon-warning-sign
         Error:
       = @job.payload.fetch(:error, :reason, 'No reason provided')
   - if @logs && !@logs.empty?
