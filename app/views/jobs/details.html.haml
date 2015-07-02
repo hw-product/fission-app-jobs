@@ -16,7 +16,10 @@
   table_data = case @job.payload.get(:data, :code_fetcher, :info, :source)
     when "github"
       parsed_uri = URI.parse(@job.payload.get(:data, :code_fetcher, :info, :url))
-      account_uri = URI::Generic.build(:scheme => parsed_uri.scheme, :host => parsed_uri.host, :path => "/#{@job.account.name}")
+      account_uri = URI::Generic.build(:scheme => parsed_uri.scheme,
+                                       :host => parsed_uri.host,
+                                       :path => '/' + @job.payload.get(:data, :code_fetcher, :info, :name)
+                                       )
       github_table_data = [['Github Account', link_to(@job.account.name, "#{account_uri}")],
                            ['Github Repository', link_to(@job.payload.fetch(:data, :github, :repository, :name, 'Unknown'), \
                              @job.payload.fetch(:data, :github, :repository, :url, '#'))],
