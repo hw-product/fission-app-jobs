@@ -5,15 +5,16 @@
   - jobs.each do |job|
     %tr.linked{ :class => (job.status == :error ? 'danger' : ''), |
                 :href => send("#{@namespace}_job_path", job.message_id) }
-      %td= job.created_at.strftime('%Y/%m/%d %H:%M:%S')
+      %td= job.payload.fetch(:data, :github, :repository, :name, 'Unknown')
       %td= job.message_id
-      %td= job.account.name
       %td= job.payload.get(:data, :router, :action)
-      %td= job.status
       %td= "#{job.percent_complete}%"
+      %td= job.status
+      %td
+        %span{ "title" => "#{job.created_at.strftime('%Y/%m/%d %H:%M:%S')}" }= time_ago_in_words(job.created_at) + ' ago'
 
-- headers        = ['Timestamp', 'Message ID', 'Account',  'Job Name', 'Status',   'Completed']
-- header_classes = ['col-md-2',  'col-md-5',   'col-md-2', 'col-md-2', 'col-md-2', 'col-md-1']
+- headers        = ['Repository', 'Message ID',  'Job Name', 'Progress', 'Status', 'Created']
+- header_classes = ['col-md-1',  'col-md-3', 'col-md-1', 'col-md-1', 'col-md-1', 'col-md-2']
 = render(:partial => 'layouts/table',                     |
          :locals => { :table_id => 'log-display',         |
                       :table_content_name => :table,      |
