@@ -9,10 +9,27 @@
     end
 
   status = "<div class='text-#{state}'>#{@job.status.to_s.humanize}</div>".html_safe
-  table_data =  [['Timestamp', @job.created_at.strftime('%Y/%m/%d %H:%M:%S %Z')],
-                 ['Account', @job.account.name],
-                 ['Status', status],
-                 ['Completed', "#{@job.percent_complete}%"]]
+  common_table_data =  [['Timestamp', @job.created_at.strftime('%Y/%m/%d %H:%M:%S %Z')],
+                        ['Status', status],
+                       ['Completed', "#{@job.percent_complete}%"]]
+
+  table_data = case @job.payload.get(:data, :code_fetcher, :info, :source)
+    when "github"
+      parsed_uri = URI.parse(@job.payload.get(:data, :code_fetcher, :info, :url))
+      account_uri = URI::Generic.build(:scheme => parsed_uri.scheme,
+                                       :host => parsed_uri.host,
+                                       :path => '/' + @job.payload.get(:data, :code_fetcher, :info, :name)
+                                       )
+      github_table_data = [['Github Account', link_to(@job.account.name, "#{account_uri}")],
+                           ['Github Repository', link_to(@job.payload.fetch(:data, :github, :repository, :name, 'Unknown'), \
+                             @job.payload.fetch(:data, :github, :repository, :url, '#'))],
+                           ['Github Commit', link_to(@job.payload.fetch(:data, :github, :head_commit, :id, 'Unknown').slice(0, 7), \
+                             @job.payload.fetch(:data, :github, :head_commit, :url, '#'))]]
+      github_table_data + common_table_data
+    else
+      common_table_data
+    end
+
 
 - content_for(:panel_header) do
   - job_type = request.path.split('/')[1].capitalize
@@ -24,6 +41,7 @@
   - if @job.status == :error
     .alert.alert-danger
       %b
+        %span.glyphicon.glyphicon-warning-sign
         Error:
       = @job.payload.fetch(:error, :reason, 'No reason provided')
   - if @logs && !@logs.empty?
