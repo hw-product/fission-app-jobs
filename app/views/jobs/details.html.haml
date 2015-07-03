@@ -27,15 +27,15 @@
       account_url = @job.payload.get(:data, :code_fetcher, :info, :url).sub(
         /#{Regexp.escape(@job.payload.get(:data, :code_fetcher, :info, :name))}.*$/, ''
       )
-      repo_ref = @job.payload.get(:data, :code_fetcher, :info, :reference)
-      ref_url = @job.payload.get(:data, :github, :compare)
+      repo_ref = @job.payload.get(:data, :code_fetcher, :info, :reference).gsub('refs/tags/','')
+      ref_url = "#{@job.payload.get(:data, :github, :repository, :url)}/releases/#{@job.payload.get(:data, :github, :ref).gsub('refs/tags/','tag/')}"
       commit_sha = @job.payload.get(:data, :code_fetcher, :info, :commit_sha).to_s.slice(0, 7)
       commit_url = @job.payload.get(:data, :github, :head_commit, :url)
 
       table_data = [
         ['Account', account_name ? link_to(account_name, account_url) : 'N/A'],
         ['Repository', repo_name ? link_to(repo_name, repo_url) : 'N/A'],
-        ['Reference', ref_url ? link_to(repo_ref, ref_url) : repo_ref],
+        ['Tag', ref_url ? link_to(repo_ref, ref_url) : repo_ref],
         ['Commit', commit_url ? link_to(commit_sha, commit_url) : commit_sha]
       ] + table_data
     end
