@@ -1,20 +1,17 @@
-- if content_for?(:pagination)
-  %div.fission-pagination.well.well-sm= content_for(:pagination)
-
 - content_for(:table) do
   - jobs.each do |job|
     %tr.linked{ :class => (job.status == :error ? 'danger' : ''), |
                 :href => send("#{@namespace}_job_path", job.message_id) }
       %td= job.payload.fetch(:data, :github, :repository, :name, 'Unknown')
-      %td= job.message_id
-      %td= job.payload.get(:data, :router, :action)
+      %td= job.payload.fetch(:data, :github, :ref, 'none').gsub('refs/tags/','')
+      %td= job.payload.fetch(:data, :github, :head_commit, :id, 'Unknown').slice(0, 7)  
       %td= "#{job.percent_complete}%"
       %td= job.status
       %td
         %span{ "title" => "#{job.created_at.strftime('%Y/%m/%d %H:%M:%S')}" }= time_ago_in_words(job.created_at) + ' ago'
 
-- headers        = ['Repository', 'Message ID',  'Job Name', 'Progress', 'Status', 'Last Updated']
-- header_classes = ['col-md-1',  'col-md-3', 'col-md-1', 'col-md-1', 'col-md-1', 'col-md-2']
+- headers        = ['Repository', 'Tag', 'Commit', 'Progress', 'Status', 'Last Updated']
+- header_classes = ['col-md-2',  'col-md-1', 'col-md-1', 'col-md-1', 'col-md-1', 'col-md-2']
 = render(:partial => 'layouts/table',                     |
          :locals => { :table_id => 'log-display',         |
                       :table_content_name => :table,      |
