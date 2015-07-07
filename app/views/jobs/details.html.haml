@@ -4,12 +4,15 @@
       'success'
     when :error
       'danger'
+    when :active
+      'warning'
     else
-      'warn'
+      'info'
     end
 
   status = "<div class='text-#{state}'>#{@job.status.to_s.humanize}</div>".html_safe
   table_data = [
+    ['Job ID', @job.message_id],
     ['Timestamp', @job.created_at.strftime('%Y/%m/%d %H:%M:%S %Z')],
     ['Status', status],
     ['Completed', "#{@job.percent_complete}%"]
@@ -27,66 +30,72 @@
       account_url = @job.payload.get(:data, :code_fetcher, :info, :url).sub(
         /#{Regexp.escape(@job.payload.get(:data, :code_fetcher, :info, :name))}.*$/, ''
       )
-      repo_ref = @job.payload.get(:data, :code_fetcher, :info, :reference).gsub('refs/tags/','')
-      ref_url = "#{@job.payload.get(:data, :github, :repository, :url)}/releases/#{@job.payload.get(:data, :github, :ref).gsub('refs/tags/','tag/')}"
+      repo_ref = @job.payload.get(:data, :code_fetcher, :info, :reference).gsub('refs/','')
+      ref_url = "#{@job.payload.get(:data, :github, :head_commit, :url)}/releases/#{@job.payload.get(:data, :github, :ref).gsub('refs/tags/','tag/')}"
       commit_sha = @job.payload.get(:data, :code_fetcher, :info, :commit_sha).to_s.slice(0, 7)
       commit_url = @job.payload.get(:data, :github, :head_commit, :url)
 
       table_data = [
         ['Account', account_name ? link_to(account_name, account_url) : 'N/A'],
         ['Repository', repo_name ? link_to(repo_name, repo_url) : 'N/A'],
-        ['Tag', ref_url ? link_to(repo_ref, ref_url) : repo_ref],
+        ['Reference', ref_url ? link_to(repo_ref, ref_url) : repo_ref],
         ['Commit', commit_url ? link_to(commit_sha, commit_url) : commit_sha]
       ] + table_data
     end
 
-- content_for(:panel_header) do
+- content_for(:job_metadata_panel_header) do
   - job_type = request.path.split('/')[1].capitalize
   %h3= "#{job_type} Job: #{@job.message_id}"
 
-- content_for(:panel_content) do
+- content_for(:job_metadata_panel_content) do
   = render(:partial => 'layouts/table',    |
            :locals => { :header_classes => header_classes, :data => table_data})
+
+- content_for(:job_error) do
   - if @job.status == :error
-    .alert.alert-danger
+    %div.alert.alert-danger
       %b
         %span.glyphicon.glyphicon-warning-sign
         Error:
       = @job.payload.fetch(:error, :reason, 'No reason provided')
+
+- content_for(:job_output) do
   - if @logs && !@logs.empty?
-    %fieldset
-      %legend
-        Logs
-      %ul.list-group
-        - @logs.each do |name, value|
-          - if Rails.env.to_s == 'development'
-            %li.list-group-item.log{'data-text' => value, :style => 'cursor: pointer'}
-              %span.glyphicon.glyphicon-open-file
-              = name
-          - else
-            %li.list-group-item.log{'data-url' => value, :style => 'cursor: pointer'}
-              %span.glyphicon.glyphicon-open-file
-              = name
+    %ul.list-group
+      - @logs.each do |name, value|
+        - if Rails.env.to_s == 'development'
+          %li.list-group-item.log{'data-text' => value, :style => 'cursor: pointer'}
+            %span.fa.fa-file-text-o
+            %span= "#{name.capitalize} Logs"
+        - else
+          %li.list-group-item.log{'data-url' => value, :style => 'cursor: pointer'}
+            %span.fa.fa-file-text-o
+            %span= "#{name.capitalize} Logs"
 
   - if content_for?(:panel_body)
     = content_for(:panel_body)
   - else
     %div.panel.panel-default
       %div.panel-heading
-        %h4.panel-title
+        %div.panel-title
           %a.accordion-toggle{'data-toggle' => 'collapse', :href => '#payload-display'}
-            Payload
+            %span.fa.fa-file-code-o
+            %span= "Payload"
       %div.panel-collapse.collapse#payload-display
-        %div.panel-body
-          %pre#job-payload~ JSON.pretty_generate(@job.payload.fetch(:data, {}).to_hash)
+        %div.panel-body.payload
+          %pre.highlight.json#job-payload~ JSON.pretty_generate(@job.payload.fetch(:data, {}).to_hash)
 
 
 - content_for(:container) do
-  = render(:partial => 'layouts/panel',                      |
-           :locals => {                                      |
-             :heading => content_for(:panel_header),         |
-             :panel_class => "panel-#{state}",               |
-             :panel_content => content_for(:panel_content) })
+  = render(:partial => 'layouts/panel',                           |
+           :locals => {                                           |
+             :heading => content_for(:job_metadata_panel_header), |
+             :panel_class => "panel-#{state} widget",             |
+             :panel_content => content_for(:job_metadata_panel_content)})
+
+  = content_for(:job_error)
+
+  = content_for(:job_output)
 
 = render(:partial => 'layouts/container',                            |
          :locals => { :container_content => content_for(:container), |
