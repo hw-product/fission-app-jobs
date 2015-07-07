@@ -3,8 +3,6 @@
     %div.col-md-8
       %h3
         Jobs Summary
-    %div.col-md-4
-      %div#jobs_summary_gauge
 
 :ruby
   content_for(:container) do
@@ -13,7 +11,8 @@
       :locals  => {
         :body_id => 'fission-jobs-summary',
         :heading => content_for(:header),
-        :panel_content => render(:partial => 'jobs/summary', :locals => {:jobs => @jobs})
+        :panel_content => render(:partial => 'jobs/summary', :locals => {:jobs => @jobs}),
+        :panel_class => 'widget'
       }
     )
   end
@@ -22,4 +21,3 @@
 
 :javascript
   #{graph_generate('jobs_summary_gauge', :size => {:height => 100}, :gauge=> {:label => {:show => false}}, :data => {:type => 'gauge', :columns => [['success', @progress]]})}
-
