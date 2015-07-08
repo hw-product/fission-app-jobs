@@ -1,3 +1,6 @@
+# v0.1.24
+* Styling and view updates
+
 # v0.1.22
 * Update view layouts and details information
 
