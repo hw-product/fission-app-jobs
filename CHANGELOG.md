@@ -1,3 +1,6 @@
+# v0.1.26
+* [fix] Force correct types on job summary display
+
 # v0.1.24
 * Styling and view updates
 
