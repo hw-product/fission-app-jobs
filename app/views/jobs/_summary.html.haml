@@ -11,8 +11,8 @@
     %tr.linked{ :class => job_status, |
                 :href => send("#{@namespace}_job_path", job.message_id) }
       %td= job.payload.fetch(:data, :github, :repository, :name, 'Unknown')
-      %td= job.payload.fetch(:data, :code_fetcher, :info, :reference, 'none').gsub('refs/','')
-      %td= job.payload.fetch(:data, :code_fetcher, :info, :commit_sha, 'Unknown').slice(0, 7)
+      %td= job.payload.fetch(:data, :code_fetcher, :info, :reference, 'none').to_s.gsub('refs/','')
+      %td= job.payload.fetch(:data, :code_fetcher, :info, :commit_sha, 'Unknown').to_s.slice(0, 7)
       %td= "#{job.percent_complete}%"
       %td= job.status
       %td
