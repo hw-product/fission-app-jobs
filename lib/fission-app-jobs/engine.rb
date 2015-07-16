@@ -26,6 +26,14 @@ module FissionApp
             :as => "#{namespace}_job"
           )
         end
+        get(
+          "#{namespace}/job/:job_id/status",
+          :defaults => {
+            :namespace => namespace
+          },
+          :to => 'jobs#job_status',
+          :as => "#{namespace}_job_status"
+        )
       end
     end
 

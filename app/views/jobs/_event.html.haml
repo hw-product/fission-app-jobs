@@ -1,0 +1,9 @@
+- case event.type
+- when 'service_start'
+  ~ "[#{event.stamp}]: Starting service - #{event.data[:service_name]}"
+- when 'service_complete'
+  ~ "[#{event.stamp}]: Completed service - #{event.data[:service_name]}"
+- when 'job_finalize'
+  ~ "[#{event.stamp}]: Job reached completed state"
+- when 'info'
+  ~ "[#{event.stamp}]: #{event.data[:info]}"
