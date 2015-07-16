@@ -1,3 +1,6 @@
+- content_for(:percent_complete) do
+  #percent-complete= "#{@job.percent_complete}%"
+
 :ruby
   state = case @job.status
     when :success, :complete
@@ -15,7 +18,7 @@
     ['Job ID', @job.message_id],
     ['Timestamp', @job.created_at.strftime('%Y/%m/%d %H:%M:%S %Z')],
     ['Status', status],
-    ['Completed', "#{@job.percent_complete}%"]
+    ['Completed', yield(:percent_complete)]
   ]
   header_classes = [
     'col-md-2',
@@ -85,6 +88,21 @@
         %div.panel-body.payload
           %pre.highlight.json#job-payload~ JSON.pretty_generate(@job.payload.fetch(:data, {}).to_hash)
 
+- content_for(:events) do
+  #job-events.panel.panel-default{'last-id' => @job.events.all.last.try(:id) || 0}
+    .panel-heading
+      .panel-title
+        %a.accordion-toggle{'data-toggle' => 'collapse', :href => '#events-display'}
+          %span.fa.fa-terminal
+          %span= 'Events'
+    .panel-collapse#events-display{:class => @job.status == :active ? '' : 'collapse'}
+      .panel-body.events
+        :ruby
+          event_output = @job.events.order(:stamp.asc).all.map do |event|
+            next if event.data[:service_name] == 'router'
+            render :partial => 'jobs/event', :locals => {:event => event}
+          end.compact.map(&:strip).join("\n").html_safe
+        %pre.pre-scrollable~ event_output
 
 - content_for(:container) do
   = render(:partial => 'layouts/panel',                           |
@@ -94,7 +112,7 @@
              :panel_content => content_for(:job_metadata_panel_content)})
 
   = content_for(:job_error)
-
+  = content_for(:events)
   = content_for(:job_output)
 
 = render(:partial => 'layouts/container',                            |
@@ -133,3 +151,16 @@
       });
     }
   );
+
+- if @job.status.to_sym == :active
+  :javascript
+    function update_job(){
+      $.ajax({
+        url: '#{send("#{@namespace}_job_status_path", @job.message_id)}',
+        type: 'GET',
+        data: {last_id: $('#job-events').attr('last-id')}
+      }).complete(function(){
+        setTimeout(function(){ update_job(); }, 10000);
+      });
+    }
+    $(document).ready(function(){ update_job(); });

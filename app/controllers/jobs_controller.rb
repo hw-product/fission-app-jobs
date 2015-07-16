@@ -72,6 +72,20 @@ class JobsController < ApplicationController
     end
   end
 
+  def job_status
+    respond_to do |format|
+      format.js do
+        last_id = params[:last_id].to_i
+        @job = @valid_jobs.where(:message_id => params[:job_id]).first
+        @events = @job.events.where{ id > last_id }.order(:stamp.asc).all
+      end
+      format.html do
+        flash[:error] = 'Unsupported request'
+        redirect_to dashboard_path
+      end
+    end
+  end
+
   protected
 
   def set_valid_jobs
