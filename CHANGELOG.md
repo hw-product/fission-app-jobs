@@ -1,3 +1,7 @@
+# v0.1.28
+* [enhancement] Update percentage complete on details page automatically
+* [feature] Display and auto update events
+
 # v0.1.26
 * [fix] Force correct types on job summary display
 
