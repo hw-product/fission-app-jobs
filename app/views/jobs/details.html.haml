@@ -56,7 +56,7 @@
 
 - content_for(:job_error) do
   - if @job.status == :error
-    %div.alert.alert-danger
+    .alert.alert-danger
       %b
         %span.glyphicon.glyphicon-warning-sign
         Error:
@@ -78,14 +78,14 @@
   - if content_for?(:panel_body)
     = content_for(:panel_body)
   - else
-    %div.panel.panel-default
-      %div.panel-heading
-        %div.panel-title
+    .panel.panel-default
+      .panel-heading
+        .panel-title
           %a.accordion-toggle{'data-toggle' => 'collapse', :href => '#payload-display'}
             %span.fa.fa-file-code-o
             %span= "Payload"
-      %div.panel-collapse.collapse#payload-display
-        %div.panel-body.payload
+      .panel-collapse.collapse#payload-display
+        .panel-body.payload
           %pre.highlight.json#job-payload~ JSON.pretty_generate(@job.payload.fetch(:data, {}).to_hash)
 
 - content_for(:events) do
