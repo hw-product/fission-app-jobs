@@ -89,7 +89,7 @@
           %pre.highlight.json#job-payload~ JSON.pretty_generate(@job.payload.fetch(:data, {}).to_hash)
 
 - content_for(:events) do
-  #job-events.panel.panel-default{'last-id' => @job.events.all.last.try(:id) || 0}
+  .panel.panel-default#job-events{'last-id' => @job.events.all.last.try(:id) || 0}
     .panel-heading
       .panel-title
         %a.accordion-toggle{'data-toggle' => 'collapse', :href => '#events-display'}
