@@ -102,7 +102,7 @@
             next if event.data[:service_name] == 'router'
             render :partial => 'jobs/event', :locals => {:event => event}
           end.compact.map(&:strip).join("\n").html_safe
-        %pre.pre-scrollable~ event_output
+        %pre.pre-scrollable.highlight~ event_output
 
 - content_for(:container) do
   = render(:partial => 'layouts/panel',                           |
