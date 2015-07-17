@@ -56,7 +56,7 @@
 
 - content_for(:job_error) do
   - if @job.status == :error
-    %div.alert.alert-danger
+    .alert.alert-danger
       %b
         %span.glyphicon.glyphicon-warning-sign
         Error:
@@ -78,18 +78,18 @@
   - if content_for?(:panel_body)
     = content_for(:panel_body)
   - else
-    %div.panel.panel-default
-      %div.panel-heading
-        %div.panel-title
+    .panel.panel-default
+      .panel-heading
+        .panel-title
           %a.accordion-toggle{'data-toggle' => 'collapse', :href => '#payload-display'}
             %span.fa.fa-file-code-o
             %span= "Payload"
-      %div.panel-collapse.collapse#payload-display
-        %div.panel-body.payload
+      .panel-collapse.collapse#payload-display
+        .panel-body.payload
           %pre.highlight.json#job-payload~ JSON.pretty_generate(@job.payload.fetch(:data, {}).to_hash)
 
 - content_for(:events) do
-  #job-events.panel.panel-default{'last-id' => @job.events.all.last.try(:id) || 0}
+  .panel.panel-default#job-events{'last-id' => @job.events.all.last.try(:id) || 0}
     .panel-heading
       .panel-title
         %a.accordion-toggle{'data-toggle' => 'collapse', :href => '#events-display'}
@@ -102,7 +102,7 @@
             next if event.data[:service_name] == 'router'
             render :partial => 'jobs/event', :locals => {:event => event}
           end.compact.map(&:strip).join("\n").html_safe
-        %pre.pre-scrollable~ event_output
+        %pre.pre-scrollable.highlight~ event_output
 
 - content_for(:container) do
   = render(:partial => 'layouts/panel',                           |
