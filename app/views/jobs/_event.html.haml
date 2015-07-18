@@ -1,6 +1,12 @@
 :ruby
-  if(current_user.session[:fission_admin] && event.data[:host] && event.data[:callback_name])
-    extra =  "[host: #{event.data[:host]} callback: #{event.data[:callback_name]}]"
+  if(current_user.session[:fission_admin] && (event.data[:host] || event.data[:callback_name]))
+    extra_info = [:host, :callback_name].map do |k|
+      if(event.data[k])
+        "#{k}: #{event.data[k]}"
+      end
+    end.compact.join(' | ')
+    extra = "[#{extra_info}]"
+  end
 - case event.type
 - when 'service_start'
   ~ "[#{event.stamp}]: Starting service - #{event.data[:service_name]} #{extra}"
