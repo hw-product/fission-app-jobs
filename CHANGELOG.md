@@ -1,3 +1,7 @@
+# v0.1.30
+* [enhancement] Modify styling of events
+* [feature] Add extra event information for admins
+
 # v0.1.28
 * [enhancement] Update percentage complete on details page automatically
 * [feature] Display and auto update events
