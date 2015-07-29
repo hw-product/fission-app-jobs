@@ -76,7 +76,7 @@ class JobsController < ApplicationController
     respond_to do |format|
       format.js do
         last_id = params[:last_id].to_i
-        @job = @valid_jobs.where(:message_id => params[:job_id]).first
+        @job = @preload_job || @valid_jobs.where(:message_id => params[:job_id]).first
         @events = @job.events.where{ id > last_id }.order(:stamp.asc).all
       end
       format.html do
@@ -102,12 +102,12 @@ class JobsController < ApplicationController
 
   def set_job_account
     if(params[:job_id])
-      job = Job.where(:message_id => params[:job_id]).last
-      if(job.account_id && job.account_id != @account.id)
+      @preload_job = Job.where(:message_id => params[:job_id]).last
+      if(@preload_job && @preload_job.account_id && @preload_job.account_id != @account.id)
         redirect_to send(
           "#{@namespace}_job_path",
           :job_id => params[:job_id],
-          :account_id => job.accound.id
+          :account_id => @preload_job.accound.id
         )
       end
     end
