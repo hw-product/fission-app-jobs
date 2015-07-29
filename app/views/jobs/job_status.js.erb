@@ -7,12 +7,15 @@ end.compact.map(&:strip).join("\n").html_safe
 
 <% unless @events.empty? %>
 $('#job-events').attr('last-id', '<%= @events.last.id %>');
+do_scroll = $('#events-display pre').prop('scrollHeight') - $('#events-display pre').scrollTop() >= $('#events-display pre').innerHeight();
 $('#events-display pre').append(<%= format_type_to_js(event_output).html_safe %>);
-$('#events-display pre').animate({scrollTop: $('#events-display pre').prop('scrollHeight')}, 3000);
+if(do_scroll){
+  $('#events-display pre').animate({scrollTop: $('#events-display pre').prop('scrollHeight')}, 3000);
+}
 <% end %>
 
 $('#percent-complete').html("<%= @job.percent_complete %>%");
 
-<% unless @job.status == :active %>
+<% if @job.status != :active && !params[:disable_redirect] %>
 setTimeout(function(){ window.document.location = "<%= send("#{@namespace}_job_path", @job.message_id) %>"; }, 5000);
 <% end %>

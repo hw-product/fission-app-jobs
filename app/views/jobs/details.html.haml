@@ -89,7 +89,7 @@
           %pre.highlight.json#job-payload~ JSON.pretty_generate(@job.payload.fetch(:data, {}).to_hash)
 
 - content_for(:events) do
-  .panel.panel-default#job-events{'last-id' => @job.events.all.last.try(:id) || 0}
+  .panel.panel-default#job-events{'last-id' => 0}
     .panel-heading
       .panel-title
         %a.accordion-toggle{'data-toggle' => 'collapse', :href => '#events-display'}
@@ -97,12 +97,7 @@
           %span= 'Events'
     .panel-collapse#events-display{:class => @job.status == :active ? '' : 'collapse'}
       .panel-body.events
-        :ruby
-          event_output = @job.events.order(:stamp.asc).all.map do |event|
-            next if event.data[:service_name] == 'router'
-            render :partial => 'jobs/event', :locals => {:event => event}
-          end.compact.map(&:strip).join("\n").html_safe
-        %pre.pre-scrollable.highlight~ event_output
+        %pre.pre-scrollable.highlight
 
 - content_for(:container) do
   = render(:partial => 'layouts/panel',                           |
@@ -164,3 +159,14 @@
       });
     }
     $(document).ready(function(){ update_job(); });
+- else
+  :javascript
+    $(document).ready(function(){
+      $('#events-display').on('show.bs.collapse', function(){
+        $.ajax({
+          url: '#{send("#{@namespace}_job_status_path", @job.message_id)}',
+          type: 'GET',
+          data: {last_id: $('#job-events').attr('last-id'), disable_redirect: true}
+        });
+      });
+    });
