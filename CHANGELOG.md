@@ -1,3 +1,7 @@
+# v0.1.32
+* [enhancement] Load events on demand for completed jobs
+* [enhancement] Disable auto-scroll if user has scrolled events
+
 # v0.1.30
 * [enhancement] Modify styling of events
 * [feature] Add extra event information for admins
