@@ -76,7 +76,7 @@ class JobsController < ApplicationController
     respond_to do |format|
       format.js do
         last_id = params[:last_id].to_i
-        @job = @preload_job || @valid_jobs.where(:message_id => params[:job_id]).first
+        @job = @valid_jobs.where(:message_id => params[:job_id]).first
         @events = @job.events.where{ id > last_id }.order(:stamp.asc).all
       end
       format.html do
