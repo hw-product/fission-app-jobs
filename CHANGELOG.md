@@ -1,3 +1,7 @@
+# v0.1.34
+* [fix] Properly auto update account on job detail load
+* [fix] Use latest version of job when updating job status
+
 # v0.1.32
 * [enhancement] Load events on demand for completed jobs
 * [enhancement] Disable auto-scroll if user has scrolled events
