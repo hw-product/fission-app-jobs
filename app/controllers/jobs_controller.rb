@@ -2,7 +2,6 @@ require 'base64'
 
 class JobsController < ApplicationController
 
-  before_action :set_job_account
   before_action :set_valid_jobs
 
   def all
@@ -100,7 +99,10 @@ class JobsController < ApplicationController
     )
   end
 
-  def set_job_account
+  # Overload account loader and force redirect if different account
+  # is required
+  def load_current_account!
+    super
     if(params[:job_id])
       @preload_job = Job.where(:message_id => params[:job_id]).last
       if(@preload_job && @preload_job.account_id && @preload_job.account_id != @account.id)
