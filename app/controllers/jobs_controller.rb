@@ -109,7 +109,7 @@ class JobsController < ApplicationController
         redirect_to send(
           "#{@namespace}_job_path",
           :job_id => params[:job_id],
-          :account_id => @preload_job.accound.id
+          :account_id => @preload_job.account.id
         )
       end
     end
