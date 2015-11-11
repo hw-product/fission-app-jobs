@@ -43,7 +43,7 @@
         ['Repository', repo_name ? link_to(repo_name, repo_url) : 'N/A'],
         ['Reference', ref_url ? link_to(repo_ref, ref_url) : repo_ref],
         ['Commit', commit_url ? link_to(commit_sha, commit_url) : commit_sha]
-      ] + table_data
+      ] + table_data + @extra_table_data
     end
 
 - content_for(:job_metadata_panel_header) do

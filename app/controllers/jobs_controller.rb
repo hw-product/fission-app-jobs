@@ -66,6 +66,7 @@ class JobsController < ApplicationController
               end
             end
           end
+          @extra_table_data = load_custom_table_data(@job)
         end
       end
     end
@@ -86,6 +87,12 @@ class JobsController < ApplicationController
   end
 
   protected
+
+  def load_custom_table_data(job)
+    FissionApp::Jobs.custom_job_details.map do |custom_data|
+      custom_data.call(job)
+    end.compact.flatten(1)
+  end
 
   def set_valid_jobs
     @valid_jobs = Job.dataset_with(

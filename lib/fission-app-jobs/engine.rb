@@ -37,5 +37,11 @@ module FissionApp
       end
     end
 
+    def self.custom_job_details
+      @@custom_job_details
+    end
+
+    @@custom_job_details = []
+
   end
 end
