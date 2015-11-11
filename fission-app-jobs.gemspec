@@ -12,5 +12,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'fission-app'
   s.add_dependency 'fission-app-multiuser'
   s.add_dependency 'd3c3-rails'
-  s.files = Dir['**/*']
+  s.files = Dir['{lib,app,config}/**/**/*'] + %w(fission-app-configs.gemspec README.md CHANGELOG.md)
 end
