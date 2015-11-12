@@ -1,3 +1,8 @@
+# v0.1.36
+* [fix] Method name typo
+* [enhancement] Allow dynamic insertion to job table data
+* [enhancement] Add colorization helper for CLI outputs
+
 # v0.1.34
 * [fix] Properly auto update account on job detail load
 * [fix] Use latest version of job when updating job status
