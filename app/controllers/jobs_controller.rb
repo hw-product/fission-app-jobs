@@ -2,6 +2,44 @@ require 'base64'
 
 class JobsController < ApplicationController
 
+  helper_method :colorize
+
+  COLOR_MAP = {
+    '0' => 'reset',
+    '1' => 'bold',
+    '30' => 'black',
+    '31' => 'red',
+    '32' => 'green',
+    '33' => 'yellow',
+    '34' => 'lightblue',
+    '35' => 'magenta',
+    '36' => 'cyan',
+    '37' => 'white'
+  }
+
+  def colorize(string)
+    new_string = string.dup
+    string.scan(/(\[(#{COLOR_MAP.keys.join('|')})(;1)?m)/).each do |result|
+      if(result[1] == '0')
+        new_string.sub!(result.first, '</span>')
+      elsif(result[1] == '1')
+        new_string.sub!(result.first, '<span style="font-weight: bold">')
+      else
+        style = Smash.new.tap do |s|
+          s['color'] = COLOR_MAP[result[1]]
+          if(result.last)
+            s['font-weight'] = 'bold'
+          end
+        end
+        style_string = style.map do |k,v|
+          "#{k}: #{v}"
+        end.join(';')
+        new_string.sub!(result.first, "<span style=#{style_string.inspect}>")
+      end
+    end
+    new_string
+  end
+
   before_action :set_valid_jobs
 
   def all

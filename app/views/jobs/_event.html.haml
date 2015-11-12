@@ -1,8 +1,9 @@
 :ruby
+
   if(current_user.session[:fission_admin] && (event.data[:host] || event.data[:callback_name]))
     extra_info = [:host, :callback_name].map do |k|
       if(event.data[k])
-        "#{k}: #{event.data[k]}"
+        "#{k}: #{colorize(event.data[k])}"
       end
     end.compact.join(' | ')
     extra = "[#{extra_info}]"
@@ -15,4 +16,4 @@
 - when 'job_finalize'
   ~ "[#{event.stamp}]: Job reached completed state #{extra}"
 - when 'info'
-  ~ "[#{event.stamp}]: #{event.data[:info]}"
+  ~ "[#{event.stamp}]: #{colorize(event.data[:info])}".html_safe
