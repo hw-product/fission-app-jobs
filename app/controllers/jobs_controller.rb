@@ -151,11 +151,15 @@ class JobsController < ApplicationController
     if(params[:job_id])
       @preload_job = Job.where(:message_id => params[:job_id]).last
       if(@preload_job && @preload_job.account_id && @preload_job.account_id != @account.id)
-        redirect_to send(
-          "#{@namespace}_job_path",
-          :job_id => params[:job_id],
-          :account_id => @preload_job.account.id
-        )
+        @namespace = @product.internal_name if @namespace.nil?
+        redirect_method = "#{@namespace}_job_path"
+        if(respond_to?(redirect_method))
+          redirect_to send(
+            redirect_method,
+            :job_id => params[:job_id],
+            :account_id => @preload_job.account.id
+          )
+        end
       end
     end
   end
