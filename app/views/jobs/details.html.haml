@@ -107,6 +107,8 @@
              :panel_content => content_for(:job_metadata_panel_content)})
 
   = content_for(:job_error)
+  - if @job.status == :active
+    = render :partial => 'diagram'
   = content_for(:events)
   = content_for(:job_output)
 

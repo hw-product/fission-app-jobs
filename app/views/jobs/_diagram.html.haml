@@ -1,0 +1,64 @@
+.panel.panel-default#job-diagram
+  .panel-heading
+    .panel-title
+      %a.accordion-toggle{'data-toggle' => 'collapse', :href => '#diagram-display'}
+        %span.fa.fa-map-signs
+        %span= 'Path'
+  .panel-collapse#diagram-display
+    .panel-body.diagram
+      #vis
+
+:ruby
+  nodes = []
+  edges = []
+  last = nil
+  @job.route_services(:models).each do |i|
+    nodes << Smash.new(:data => Smash.new(:id => i.name, :name => i.display_name.humanize))
+    if(last)
+      edges << Smash.new(
+        :data => Smash.new(
+          :id => "#{last.name}_#{i.name}",
+          :source => last.name,
+          :target => i.name
+        )
+      )
+    end
+    last = i
+  end
+  elements = Smash.new(
+    :nodes => nodes,
+    :edges => edges
+  )
+  root_element = elements[:nodes].first[:data][:id]
+
+:javascript
+
+  function diagram_setup(){
+    window['job-cyto'] = cytoscape({
+      container: document.getElementById('vis'),
+      boxSelectionEnabled: false,
+      autounselectify: true,
+      style: cytoscape.stylesheet().selector('node').css({'content': 'data(name)'})
+        .selector('edge').css({'target-arrow-shape': 'triangle', 'width': 4, 'line-color': '#ddd', 'target-arrow-color': '#ddd'})
+        .selector('.in-progress').css({'background-color': '#C58917', 'line-color': '#99C68E', 'transition-property': 'background-color, line-color, target-arrow-color', 'transition-duration': '0.5s'})
+        .selector('.failed').css({'background-color': '#C11B17', 'line-color': '#99C68E', 'transition-property': 'background-color, line-color, target-arrow-color', 'transition-duration': '0.5s'})
+        .selector('.highlighted').css({'background-color': '#347235', 'line-color': '#99C68E', 'transition-property': 'background-color, line-color, target-arrow-color', 'transition-duration': '0.5s'}),
+      elements: #{format_type_to_js(elements)},
+      layout: {
+        name: 'grid',
+        fit: true,
+        roots: '##{root_element}',
+        padding: 10,
+        rows: 1
+      }
+    });
+    window['job-bfs'] = window['job-cyto'].elements().bfs('##{root_element}', function(){}, true);
+
+  }
+  $(document).ready(diagram_setup);
+
+:css
+  #vis{
+    height: 150px;
+    width: 100%;
+  }

@@ -13,6 +13,29 @@ if(do_scroll){
 }
 <% end %>
 $('#percent-complete').html("<%= @job.percent_complete %>%");
+<% d_pos = (@job.route_services(:models).count * 2) - 2 %>
+i = 0;
+ix = 0;
+while(i < <%= d_pos %> && i < window['job-bfs'].path.length){
+  if(!window['job-bfs'].path[i].hasClass('highlighted')){
+    setTimeout(function(x){
+      window['job-bfs'].path[x].removeClass('in-progress');
+      window['job-bfs'].path[x].addClass('highlighted');
+    }, (1000 * i) + 1, i);
+    ix++;
+  }
+  i++;
+}
+
+if(<%= d_pos %> < window['job-bfs'].path.length){
+  setTimeout(function(){
+    window['job-bfs'].path[<%= d_pos %>].addClass('in-progress');
+  }, (1000 * ix) + 1);
+}
 <% if @job.status != :active && !params[:disable_redirect] %>
-setTimeout(function(){ window.document.location = "<%= send("#{@namespace}_job_path", @job.message_id) %>"; }, 5000);
+  window['job-bfs'].path[<%= d_pos %>].removeClass('in-progress');
+  window['job-bfs'].path[<%= d_pos %>].addClass('<%= @job.status == :error ? 'failed' : 'highlighted'%>');
+  setTimeout(function(){
+    window.document.location = "<%= send("#{@namespace}_job_path", @job.message_id) %>";
+  }, 5000);
 <% end %>
