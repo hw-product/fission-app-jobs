@@ -137,10 +137,10 @@ class JobsController < ApplicationController
       :scalars => {
         :route => ['data', 'router', 'action'],
         :status => ['status']
-      }
-    ).where(
-      :route => params[:namespace].to_s,
+      },
       :account_id => current_user.run_state.current_account.id
+    ).where(
+      :route => params[:namespace].to_s
     )
   end
 
