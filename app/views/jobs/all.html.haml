@@ -18,6 +18,3 @@
   end
 
 = render(:partial => 'layouts/container', :locals => { :container_class => 'jobs-summary' })
-
-:javascript
-  #{graph_generate('jobs_summary_gauge', :size => {:height => 100}, :gauge=> {:label => {:show => false}}, :data => {:type => 'gauge', :columns => [['success', @progress]]})}
