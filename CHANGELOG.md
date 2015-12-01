@@ -1,3 +1,7 @@
+# v0.2.0
+* [cleanup] Remove unused data collection and view content
+* [fix] Provide full auto account-redirect support
+
 # v0.1.38
 * [fix] Job auto-redirect to different current account
 * [enhancement] Use account restrictor on jobs dataset construction
