@@ -1,3 +1,8 @@
+# v0.1.38
+* [fix] Job auto-redirect to different current account
+* [enhancement] Use account restrictor on jobs dataset construction
+* [enhancement] Visual feedback for in-progress jobs
+
 # v0.1.36
 * [fix] Method name typo
 * [enhancement] Allow dynamic insertion to job table data
