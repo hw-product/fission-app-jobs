@@ -13,7 +13,7 @@ if(do_scroll){
 }
 <% end %>
 $('#percent-complete').html("<%= @job.percent_complete %>%");
-<% d_pos = (@job.route_services(:models).count * 2) - 2 %>
+<% d_pos = @job.completed_services(:models).count + 2 %>
 i = 0;
 ix = 0;
 while(i < <%= d_pos %> && i < window['job-bfs'].path.length){
