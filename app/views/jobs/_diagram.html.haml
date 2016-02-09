@@ -53,7 +53,7 @@
       }
     });
     window['job-bfs'] = window['job-cyto'].elements().bfs('##{root_element}', function(){}, true);
-
+    window['job-services'] = #{nodes.map{|n| n.get(:data, :id)}};
   }
   $(document).ready(diagram_setup);
 
