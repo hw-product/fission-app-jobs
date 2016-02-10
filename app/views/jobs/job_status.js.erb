@@ -15,8 +15,7 @@ if(do_scroll){
 $('#percent-complete').html("<%= @job.percent_complete %>%");
 completed = <%= @job.completed_services(:models).map(&:name).to_s.html_safe %>;
 idx = 0;
-for(array_index in completed){
-    service = completed[array_index];
+completed.forEach(function(service){
     if(window['job-services'].includes(service)){
         window['job-bfs'].path[idx].removeClass('in-progress');
         window['job-bfs'].path[idx].addClass('highlighted');
@@ -26,7 +25,7 @@ for(array_index in completed){
             idx = idx + 2;
         }
     }
-}
+});
 <% if @job.status != :active && !params[:disable_redirect] %>
     window['job-bfs'].path[idx].removeClass('in-progress');
     window['job-bfs'].path[idx].addClass('<%= @job.status == :error ? 'failed' : 'highlighted'%>');
