@@ -8,12 +8,16 @@
     end.compact.join(' | ')
     extra = "[#{extra_info}]"
   end
+
 - case event.type
 - when 'service_start'
   ~ "[#{event.stamp}]: Starting service - #{event.data[:service_name]} #{extra}"
 - when 'service_complete'
   ~ "[#{event.stamp}]: Completed service - #{event.data[:service_name]} #{extra}"
 - when 'job_finalize'
-  ~ "[#{event.stamp}]: Job reached completed state #{extra}"
+  - if event.data[:state] == 'error'
+    ~ "[#{event.stamp}]: ERROR - Processing halted. Error state encounted for service: #{event.data[:service_name]}. #{extra}"
+  - else
+    ~ "[#{event.stamp}]: Job reached completed state #{extra}"
 - when 'info'
   ~ "[#{event.stamp}]: #{colorize(event.data[:info])}".html_safe
