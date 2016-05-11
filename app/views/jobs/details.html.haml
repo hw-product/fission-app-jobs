@@ -33,8 +33,8 @@
       account_url = @job.payload.get(:data, :code_fetcher, :info, :url).sub(
         /#{Regexp.escape(@job.payload.get(:data, :code_fetcher, :info, :name))}.*$/, ''
       )
-      repo_ref = @job.payload.get(:data, :code_fetcher, :info, :reference).gsub('refs/','')
-      ref_url = "#{@job.payload.get(:data, :github, :head_commit, :url)}/releases/#{@job.payload.get(:data, :github, :ref).gsub('refs/tags/','tag/')}"
+      repo_ref = @job.payload.get(:data, :code_fetcher, :info, :reference).to_s.sub('refs/','')
+      ref_url = "#{@job.payload.get(:data, :github, :head_commit, :url)}/releases/#{@job.payload.get(:data, :github, :ref).to_s.sub('refs/tags/','tag/')}"
       commit_sha = @job.payload.get(:data, :code_fetcher, :info, :commit_sha).to_s.slice(0, 7)
       commit_url = @job.payload.get(:data, :github, :head_commit, :url)
 
